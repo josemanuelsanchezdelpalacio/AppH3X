@@ -59,6 +59,14 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+
+    //para la navegacion
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+    //para textfield
+    implementation("androidx.compose.material3:material3:1.1.2")
+    //para el viewmodel
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
