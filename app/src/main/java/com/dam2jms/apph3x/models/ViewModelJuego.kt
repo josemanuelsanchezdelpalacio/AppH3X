@@ -33,14 +33,15 @@ class ViewModelJuego : ViewModel() {
         }
 
         //si el resultado de la operacion no es nulo y es mayor o igual a 0
-        if (resultado != null && resultado >= 0) {
+        if (resultado != null && resultado > 0) {
+            //filtro los numeros usados en la operacion
+            val numerosActualizados = _uiState.value.numerosBotones.filter {
+                it != numero1 && it != numero2
+            } + resultado //y pongo el resultado a la lista de numeros de los botones
+
             //actualizo la lista de numeros de los botones
             _uiState.value = _uiState.value.copy(
-                numerosBotones = _uiState.value.numerosBotones.filter {
-                    //filtro los numeros usados en la operacion
-                    it != numero1 && it != numero2
-                } + resultado, //y pongo el resultado a la lista de numeros de los botones
-
+                numerosBotones = numerosActualizados,
                 //pongo los numeros vacios para que se quite el boton
                 numero1 = "",
                 numero2 = ""
