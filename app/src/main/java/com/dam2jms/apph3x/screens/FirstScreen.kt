@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.dam2jms.apph3x.models.ViewModelJuego
-import com.dam2jms.apph3x.navigation.AppScreens
 import com.dam2jms.apph3x.states.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,6 +42,8 @@ import com.dam2jms.apph3x.states.UiState
 fun FirstScreen(navController: NavController, mvvm: ViewModelJuego) {
 
     val uiState by mvvm.uiState.collectAsState()
+    //genero el numero aleatorio
+    mvvm.crearNumeroAleatorio()
 
     Scaffold(
         topBar = {
@@ -62,79 +63,68 @@ fun FirstScreen(navController: NavController, mvvm: ViewModelJuego) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun h3xBodyScreen(modifier: Modifier, viewModel: ViewModelJuego, uiState: UiState) {
-    val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
-    val menuOptions = arrayOf("+", "-", "*", "/")
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(menuOptions[0]) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Número objetivo: ${uiState.numeroAleatorio}", fontSize = 24.sp)
+    val context = LocalContext.current
+
+    //lista con las opciones de las operaciones
+    val listaOperaciones : List<String> = listOf("+", "-", "*", "/")
+    //variable para controlar la abertura y cierre del menu
+    var expanded by remember { mutableStateOf(false) }
+    //variable para almacenar la opcion seleccionada del menu desplegable de operaciones
+    var opcionSeleccionada by remember { mutableStateOf(listaOperaciones[0]) }
+
+    Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        //muestro por pantalla el numero aleatorio generado
+        Text(text = "Numero objetivo: ${uiState.numeroAleatorio}", fontSize = 24.sp)
 
         Column {
-            Row {
-                uiState.numerosBotones.take(5).forEachIndexed { index, numero ->
-                    Button(
-                        onClick = {
-                            if (uiState.numero1.isEmpty()) {
-                                viewModel.changedNumero1(numero)
-                            } else if (uiState.numero2.isEmpty()) {
-                                viewModel.changedNumero2(numero)
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            Color(0xFF008000)
-                        )
-                    ) {
-                        Text(text = numero.toString())
+            //creo dos filas con 5 botones en cada una
+            uiState.numerosBotones.chunked(5).forEach { fila ->
+                Row {
+                    //recorro cada fila y les pongo los numeros
+                    fila.forEach { numero ->
+                        Button(
+                            onClick = {
+                                //para seleccionar los numeros.
+                                if (uiState.numero1.isEmpty()) {
+                                    viewModel.changedNumero1(numero)
+                                } else if (uiState.numero2.isEmpty()) {
+                                    viewModel.changedNumero2(numero)
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(Color(0xFF008000))
+                        ) {
+                            Text(text = numero.toString())
+                        }
                     }
                 }
             }
-            Row {
-                uiState.numerosBotones.drop(5).forEachIndexed { index, numero ->
-                    Button(
-                        onClick = {
-                            if (uiState.numero1.isEmpty()) {
-                                viewModel.changedNumero1(numero)
-                            } else if (uiState.numero2.isEmpty()) {
-                                viewModel.changedNumero2(numero)
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            Color(0xFF008000)
-                        )
-                    ) {
-                        Text(text = numero.toString())
-                    }
-                }
-            }
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        //primer textfield con el primer numero seleccionado
         TextField(value = uiState.numero1, onValueChange = {}, readOnly = true)
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        //creo la lista desplegable de las operaciones
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
                 TextField(
-                    value = selectedText,
+                    value = opcionSeleccionada,
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     modifier = Modifier.menuAnchor()
                 )
                 ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = !expanded }) {
-                    menuOptions.forEach { opcion ->
+                    listaOperaciones.forEach { opcion ->
                         DropdownMenuItem(
                             text = { Text(text = opcion) },
                             onClick = {
-                                selectedText = opcion
+                                opcionSeleccionada = opcion
                                 viewModel.changedOperacion(opcion)
                                 expanded = false
                                 Toast.makeText(context, "Has elegido la $opcion", Toast.LENGTH_SHORT).show()
@@ -147,6 +137,7 @@ fun h3xBodyScreen(modifier: Modifier, viewModel: ViewModelJuego, uiState: UiStat
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        //segundo textfield con el segundo numero seleccionado
         TextField(value = uiState.numero2, onValueChange = {}, readOnly = true)
 
         Spacer(modifier = Modifier.height(16.dp))
