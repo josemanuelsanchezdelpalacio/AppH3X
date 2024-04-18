@@ -66,41 +66,38 @@ fun h3xBodyScreen(modifier: Modifier, viewModel: ViewModelJuego, uiState: UiStat
 
     val context = LocalContext.current
 
-    //lista con las opciones de las operaciones
-    val listaOperaciones : List<String> = listOf("+", "-", "*", "/")
     //variable para controlar la abertura y cierre del menu
     var expanded by remember { mutableStateOf(false) }
     //variable para almacenar la opcion seleccionada del menu desplegable de operaciones
-    var opcionSeleccionada by remember { mutableStateOf(listaOperaciones[0]) }
+    var opcionSeleccionada by remember { mutableStateOf(uiState.listaOperaciones[0]) }
 
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         //muestro por pantalla el numero aleatorio generado
         Text(text = "Numero objetivo: ${uiState.numeroAleatorio}", fontSize = 24.sp)
 
-        Column {
-            //creo dos filas con 5 botones en cada una
-            uiState.numerosBotones.chunked(5).forEach { fila ->
-                Row {
-                    //recorro cada fila y les pongo los numeros
-                    fila.forEach { numero ->
-                        Button(
-                            onClick = {
-                                //para seleccionar los numeros.
-                                if (uiState.numero1.isEmpty()) {
-                                    viewModel.changedNumero1(numero)
-                                } else if (uiState.numero2.isEmpty()) {
-                                    viewModel.changedNumero2(numero)
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(Color(0xFF008000))
-                        ) {
-                            Text(text = numero.toString())
-                        }
+
+        //creo dos filas con 5 botones en cada una
+        uiState.numerosBotones.chunked(5).forEach { fila ->
+            Row {
+                //recorro cada fila y les pongo los numeros
+                fila.forEach { numero ->
+                    Button(
+                        onClick = {
+                            //para seleccionar los numeros.
+                            if (uiState.numero1.isEmpty()) {
+                                viewModel.changedNumero1(numero)
+                            } else if (uiState.numero2.isEmpty()) {
+                                viewModel.changedNumero2(numero)
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(Color(0xFF008000))
+                    ) {
+                        Text(text = numero.toString())
                     }
                 }
             }
-
         }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -111,7 +108,9 @@ fun h3xBodyScreen(modifier: Modifier, viewModel: ViewModelJuego, uiState: UiStat
 
         //creo la lista desplegable de las operaciones
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }) {
                 TextField(
                     value = opcionSeleccionada,
                     onValueChange = {},
@@ -119,15 +118,21 @@ fun h3xBodyScreen(modifier: Modifier, viewModel: ViewModelJuego, uiState: UiStat
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     modifier = Modifier.menuAnchor()
                 )
-                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = !expanded }) {
-                    listaOperaciones.forEach { opcion ->
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = !expanded }) {
+                    uiState.listaOperaciones.forEach { opcion ->
                         DropdownMenuItem(
                             text = { Text(text = opcion) },
                             onClick = {
                                 opcionSeleccionada = opcion
                                 viewModel.changedOperacion(opcion)
                                 expanded = false
-                                Toast.makeText(context, "Has elegido la $opcion", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Has elegido la $opcion",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         )
                     }
