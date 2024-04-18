@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -68,8 +69,9 @@ fun h3xBodyScreen(modifier: Modifier, viewModel: ViewModelJuego, uiState: UiStat
 
     //variable para controlar la abertura y cierre del menu
     var expanded by remember { mutableStateOf(false) }
-    //variable para almacenar la opcion seleccionada del menu desplegable de operaciones
-    var opcionSeleccionada by remember { mutableStateOf(uiState.listaOperaciones[0]) }
+
+    //variable para guardar la opcion seleccionada
+    var opcionSeleccionada by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         //muestro por pantalla el numero aleatorio generado
@@ -112,7 +114,7 @@ fun h3xBodyScreen(modifier: Modifier, viewModel: ViewModelJuego, uiState: UiStat
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }) {
                 TextField(
-                    value = opcionSeleccionada,
+                    value = uiState.operacion,
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -147,11 +149,33 @@ fun h3xBodyScreen(modifier: Modifier, viewModel: ViewModelJuego, uiState: UiStat
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (uiState.ganador) {
+            AlertDialog(
+                onDismissRequest = {  },
+                title = { Text("HAS GANADO!") },
+                text = { Text("Has llegado al numero objetivo") },
+                confirmButton = {
+                    Button(onClick = { /* Dismiss the dialog */ }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+
         Button(onClick = {
             viewModel.actualizarNumeros(uiState.numero1.toInt(), uiState.numero2.toInt(), uiState.operacion)
         }) {
             Text("Calcular")
         }
+
+        Button(onClick = { viewModel.clearNumero1() }) {
+            Text("Borrar numero 1")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = { viewModel.clearNumero2() }) {
+            Text("Borrar numero 2")
+        }
     }
 }
-

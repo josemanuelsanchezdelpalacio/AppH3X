@@ -5,5 +5,6 @@ data class UiState(
     val numeroAleatorio: Int = 0,
     val numero1: String = "",
     val numero2: String = "",
-    val operacion: String = ""
+    val operacion: String = "",
+    val ganador: Boolean = false
 )
