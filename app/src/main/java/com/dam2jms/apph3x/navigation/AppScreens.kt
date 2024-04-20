@@ -1,4 +1,6 @@
 package com.dam2jms.apph3x.navigation
 sealed class AppScreens (val route: String){
-    object FirstScreen: AppScreens(route = "first_screen")
+    object InstruccionesScreen: AppScreens(route = "instrucciones_screen")
+
+    object JuegoScreen: AppScreens(route = "juego_screen")
 }

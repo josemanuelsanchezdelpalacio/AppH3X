@@ -6,5 +6,5 @@ data class UiState(
     val numero1: String = "",
     val numero2: String = "",
     val operacion: String = "",
-    val ganador: Boolean = false
+    var ganador: String = ""
 )

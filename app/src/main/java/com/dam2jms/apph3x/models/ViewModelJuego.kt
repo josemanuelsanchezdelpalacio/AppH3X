@@ -49,21 +49,19 @@ class ViewModelJuego : ViewModel() {
         }
 
         if (resultado == _uiState.value.numeroAleatorio) {
-            _uiState.value = _uiState.value.copy(ganador = true)
+            _uiState.value.ganador = "Has ganado.\n Has llegado al numero objetivo."
         }
+    }
+
+    fun reiniciarJuego() {
+        _uiState.value = _uiState.value.copy(numero1 = "", numero2 = "", operacion = "")
+        crearNumeroAleatorio()
+        _uiState.value = _uiState.value.copy(numerosBotones = listOf(1, 3, 4, 6, 7, 8, 9, 10, 25, 50))
     }
 
     //funcion para crear un numero aleatorio entre 0 y 999
     fun crearNumeroAleatorio() {
         val numeroAleatorio = (0..999).random()
         _uiState.value = _uiState.value.copy(numeroAleatorio = numeroAleatorio)
-    }
-
-    fun clearNumero1() {
-        _uiState.value = _uiState.value.copy(numero1 = "")
-    }
-
-    fun clearNumero2() {
-        _uiState.value = _uiState.value.copy(numero2 = "")
     }
 }
