@@ -22,7 +22,7 @@ class ViewModelJuego : ViewModel() {
         _uiState.value = _uiState.value.copy(operacion = operacion)
     }
 
-    fun actualizarNumeros(numero1: Int, numero2: Int, operacion: String) {
+    fun actualizarNumeros(numero1: Int, numero2: Int, operacion: String): UiState {
         //hago las operaciones segun la opcion que se seleccione
         val resultado = when (operacion) {
             "+" -> numero1 + numero2
@@ -33,24 +33,26 @@ class ViewModelJuego : ViewModel() {
         }
 
         //si el resultado de la operacion no es nulo y es mayor o igual a 0
+        var numerosActualizados = _uiState.value.numerosBotones
         if (resultado != null && resultado > 0) {
             //filtro los numeros usados en la operacion
-            val numerosActualizados = _uiState.value.numerosBotones.filter {
+            numerosActualizados = _uiState.value.numerosBotones.filter {
                 it != numero1 && it != numero2
             } + resultado //y pongo el resultado a la lista de numeros de los botones
-
-            //actualizo la lista de numeros de los botones
-            _uiState.value = _uiState.value.copy(
-                numerosBotones = numerosActualizados,
-                //pongo los numeros vacios para que se quite el boton
-                numero1 = "",
-                numero2 = ""
-            )
         }
 
+        var ganador = ""
         if (resultado == _uiState.value.numeroAleatorio) {
-            _uiState.value.ganador = "Has ganado.\n Has llegado al numero objetivo."
+            ganador = "Has ganado.\nHas llegado al número objetivo."
         }
+
+        return _uiState.value.copy(
+            numerosBotones = numerosActualizados,
+            //pongo los numeros vacios para que se quite el boton
+            numero1 = "",
+            numero2 = "",
+            ganador = ganador
+        )
     }
 
     fun reiniciarJuego() {
@@ -63,5 +65,13 @@ class ViewModelJuego : ViewModel() {
     fun crearNumeroAleatorio() {
         val numeroAleatorio = (0..999).random()
         _uiState.value = _uiState.value.copy(numeroAleatorio = numeroAleatorio)
+    }
+
+    fun borrarNumero1() {
+        _uiState.value = _uiState.value.copy(numero1 = "")
+    }
+
+    fun borrarNumero2() {
+        _uiState.value = _uiState.value.copy(numero2 = "")
     }
 }
